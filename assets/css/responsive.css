@@ -6,6 +6,14 @@
         padding: 0 var(--spacing-md);
     }
     
+    .logo {
+        height: 55px;
+    }
+    
+    .shark-week-logo {
+        width: 200px;
+    }
+    
     .hero-title {
         font-size: clamp(2.5rem, 6vw, 4rem);
     }
@@ -43,8 +51,12 @@
         gap: var(--spacing-sm);
     }
     
+    .logo {
+        height: 50px;
+    }
+    
     .shark-week-logo {
-        height: 40px;
+        width: 180px;
     }
     
     .nav {
@@ -175,6 +187,14 @@
     /* Header Small Mobile */
     .header {
         padding: var(--spacing-xs) 0;
+    }
+    
+    .logo {
+        height: 40px;
+    }
+    
+    .shark-week-logo {
+        width: 140px;
     }
     
     .nav {

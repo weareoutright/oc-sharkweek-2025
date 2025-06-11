@@ -88,9 +88,17 @@ a {
     align-items: center;
 }
 
+.logo {
+    height: 60px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
 .shark-week-logo {
-    height: 50px;
-    width: auto;
+    width: 230px;
+    height: auto;
 }
 
 .nav {
