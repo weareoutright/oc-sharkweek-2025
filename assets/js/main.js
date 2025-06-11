@@ -146,14 +146,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
     
-    // Apply scroll animations to sections
-    const animatedElements = document.querySelectorAll('.video-section, .conservation-section, .cta-card');
+    // CTA cards sequential animation observer
+    const ctaAnimateOnScroll = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const ctaCards = document.querySelectorAll('.cta-card');
+                ctaCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 500); // 500ms (half second) delay between each card
+                });
+                // Only trigger once, then unobserve
+                ctaAnimateOnScroll.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Apply scroll animations to sections (excluding CTA cards for separate handling)
+    const animatedElements = document.querySelectorAll('.video-section, .conservation-section');
     animatedElements.forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         animateOnScroll.observe(el);
     });
+    
+    // Setup CTA cards for sequential animation
+    const ctaCards = document.querySelectorAll('.cta-card');
+    const ctaSection = document.querySelector('.cta-sections');
+    if (ctaSection && ctaCards.length > 0) {
+        ctaCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        ctaAnimateOnScroll.observe(ctaSection);
+    }
     
     // Social media hashtag copying
     const socialTags = document.querySelectorAll('.hashtag, .tag');
