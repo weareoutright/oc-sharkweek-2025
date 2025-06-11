@@ -64,8 +64,8 @@ Creating a static HTML page for Ocean Conservancy's "Shark Week" to be hosted on
 - **Headline**: "START A CLEANUP"
 - **Message**: "Learn how you can start your own cleanup and download our CleanSwell app."
 - **Actions**: 
-  - Link to cleanup guide (page or PDF - pending from @Megan Montemurno)
-  - Link to CleanSwell app download
+  - ✅ Link to cleanup guide: https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/start-a-cleanup/
+  - ✅ Link to CleanSwell app: https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/clean-swell-app/
 
 ## Performance Optimizations
 - Optimized images (WebP format with fallbacks)

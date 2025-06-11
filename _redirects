@@ -1,0 +1,21 @@
+# Cloudflare Pages Redirects Configuration
+# Ocean Conservancy Shark Week Landing Page
+
+# Redirect common variations to main page
+/shark-week /
+/sharkweek /
+/shark_week /
+
+# Handle missing trailing slashes
+/assets/css /assets/css/
+/assets/js /assets/js/
+/assets/images /assets/images/
+/assets/video /assets/video/
+
+# 404 fallback to main page for SPA-like behavior
+/* / 200
+
+# External redirects for CTAs
+# These could be used for tracking purposes if needed:
+# /cleanup-guide https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/start-a-cleanup/ 302
+# /cleanswell-app https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/clean-swell-app/ 302

@@ -1,0 +1,325 @@
+/* Responsive Styles for Ocean Conservancy Shark Week */
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero-title {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+    }
+    
+    .video-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    
+    .video-text h2 {
+        font-size: 2rem;
+    }
+    
+    .cta-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .footer-content {
+        gap: var(--spacing-md);
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    /* Header Mobile */
+    .header-content {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .shark-week-logo {
+        height: 40px;
+    }
+    
+    .nav {
+        gap: var(--spacing-md);
+    }
+    
+    .nav-link {
+        font-size: 0.9rem;
+    }
+    
+    /* Hero Mobile */
+    .hero {
+        height: 100vh;
+        min-height: 500px;
+        padding-top: 100px;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 8vw, 3rem);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1rem, 4vw, 1.2rem);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .tune-in-message {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-sm);
+    }
+    
+    .tune-in-text {
+        font-size: 1rem;
+    }
+    
+    .social-tags {
+        gap: var(--spacing-xs);
+    }
+    
+    .hashtag,
+    .tag {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+    
+    /* Video Section Mobile */
+    .video-section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    
+    .video-text h2 {
+        font-size: 1.8rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .video-text p {
+        font-size: 1rem;
+    }
+    
+    /* Conservation Section Mobile */
+    .conservation-section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .conservation-content h2 {
+        font-size: 1.8rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .conservation-content p {
+        font-size: 1rem;
+    }
+    
+    /* CTA Sections Mobile */
+    .cta-sections {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .cta-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .cta-card {
+        margin: 0 auto;
+        max-width: 400px;
+    }
+    
+    .cta-image {
+        height: 200px;
+    }
+    
+    .cta-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .cta-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+    }
+    
+    .cta-button {
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* Footer Mobile */
+    .footer {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    /* Header Small Mobile */
+    .header {
+        padding: var(--spacing-xs) 0;
+    }
+    
+    .nav {
+        gap: var(--spacing-sm);
+    }
+    
+    .nav-link {
+        font-size: 0.8rem;
+    }
+    
+    /* Hero Small Mobile */
+    .hero {
+        min-height: 450px;
+    }
+    
+    .hero-content {
+        padding: 0 var(--spacing-xs);
+    }
+    
+    .hero-title {
+        font-size: clamp(1.8rem, 10vw, 2.5rem);
+        line-height: 1.1;
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+    }
+    
+    .tune-in-message {
+        padding: var(--spacing-sm);
+        margin: 0;
+    }
+    
+    .social-tags {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    
+    /* Sections Small Mobile */
+    .video-section,
+    .conservation-section,
+    .cta-sections {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    
+    .video-text h2,
+    .conservation-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .cta-content h3 {
+        font-size: 1.2rem;
+    }
+    
+    .cta-content p {
+        font-size: 0.9rem;
+    }
+    
+    /* Footer Small Mobile */
+    .footer {
+        padding: var(--spacing-md) 0;
+    }
+    
+    .social-links {
+        gap: var(--spacing-sm);
+    }
+}
+
+/* Landscape Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        height: 100vh;
+        min-height: 400px;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 6vw, 2.5rem);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1rem, 3vw, 1.1rem);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .tune-in-message {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-image,
+    .cta-image img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-gray: #A0AEC0;
+        --light-gray: #1A202C;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .header,
+    .video-section,
+    .footer {
+        display: none;
+    }
+    
+    .hero {
+        height: auto;
+        min-height: auto;
+        page-break-after: always;
+    }
+    
+    .hero-overlay {
+        background: rgba(27, 54, 93, 0.3);
+    }
+    
+    .cta-sections {
+        page-break-inside: avoid;
+    }
+    
+    .cta-card {
+        break-inside: avoid;
+        margin-bottom: var(--spacing-lg);
+    }
+}
