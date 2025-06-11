@@ -4,6 +4,14 @@ All notable changes to the Ocean Conservancy Shark Week 2025 landing page projec
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-01-11
+
+### Enhanced
+- Enhanced parallax effect on hero background image:
+  - Increased vertical movement speed from 0.4 to 1.2 (3x faster downward movement)
+  - Doubled horizontal drift from 120px to 240px maximum leftward movement
+  - More dramatic visual impact during scroll interactions
+
 ## [1.1.0] - 2025-01-11
 
 ### Added

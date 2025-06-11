@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Calculate scroll progress through hero section (0 to 1)
                 const scrollProgress = Math.max(0, Math.min(1, scrollY / heroHeight));
                 
-                // Enhanced vertical parallax - more noticeable movement
-                const verticalSpeed = 0.4;
+                // Enhanced vertical parallax - move down (positive direction)
+                const verticalSpeed = 1.2;
                 const yPos = scrollY * verticalSpeed;
                 
-                // More pronounced horizontal drift
-                const horizontalDrift = scrollProgress * 80; // Max 80px drift
+                // More pronounced horizontal drift - move left (negative direction)
+                const horizontalDrift = -scrollProgress * 240; // Max 240px drift left
                 
                 // More dramatic zoom effect
                 const baseScale = 1.1; // Start more zoomed
