@@ -125,11 +125,6 @@
 
     <!-- Footer -->
     <footer class="gutenberg alignfull">
-        <!-- Shark Fin Animation (preserved from our design) -->
-        <div class="footer__shark-fin">
-            <img src="assets/images/shark-fin-vector.svg" alt="Shark Fin" class="footer__fin-animation">
-        </div>
-        
         <video playsinline="" muted="" loop="" preload="auto" poster="https://oceanconservancy.org/wp-content/uploads/2022/02/compressed-video-thumbnail.jpg" class="oco-fot__video desktop" autoplay="true">
             <source src="https://oceanconservancy.org/wp-content/uploads/2024/01/footer-blend-compressed.mp4?robots-disallow=1" type="video/mp4">
         </video>
@@ -137,6 +132,11 @@
         <video playsinline="" muted="" loop="" preload="none" poster="https://oceanconservancy.org/wp-content/uploads/2022/02/Screen-Shot-2021-12-01-at-9.48.51-AM.png" class="oco-fot__video mobile">
             <source src="https://oceanconservancy.org/wp-content/uploads/2024/01/footer-blend-mobile-compressed.mp4?robots-disallow=1" type="video/mp4">
         </video>
+        
+        <!-- Shark Fin Animation (positioned behind footer content) -->
+        <div class="footer__shark-fin">
+            <img src="assets/images/shark-fin-vector.svg" alt="Shark Fin" class="footer__fin-animation">
+        </div>
         
         <div class="constrained">
             <div class="email-signup-container">
@@ -282,6 +282,7 @@
         </div>
     </footer>
 
+    <script src="node_modules/gsap/dist/gsap.min.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

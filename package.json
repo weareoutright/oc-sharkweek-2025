@@ -20,5 +20,8 @@
     "static-website"
   ],
   "author": "Ocean Conservancy",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "gsap": "^3.13.0"
+  }
 }
