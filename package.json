@@ -1,0 +1,24 @@
+{
+  "name": "oc-sharkweek-2025",
+  "version": "1.0.0",
+  "description": "Ocean Conservancy Shark Week 2025 static website",
+  "main": "index.html",
+  "scripts": {
+    "build-css": "node-sass assets/css/styles.scss assets/css/styles.css",
+    "watch-css": "node-sass assets/css/styles.scss assets/css/styles.css --watch",
+    "serve": "python3 -m http.server 8000",
+    "dev": "npm run watch-css & npm run serve",
+    "screenshot": "node screenshot.js"
+  },
+  "devDependencies": {
+    "node-sass": "^9.0.0",
+    "puppeteer": "^24.11.2"
+  },
+  "keywords": [
+    "shark-week",
+    "ocean-conservancy",
+    "static-website"
+  ],
+  "author": "Ocean Conservancy",
+  "license": "MIT"
+}
