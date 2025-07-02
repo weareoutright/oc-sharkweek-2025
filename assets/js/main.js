@@ -65,7 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('Animation complete - cleaning up at progress:', self.progress);
                             gsap.set(splashSection, { display: "none" }); // Hide splash completely
                             if (navElement) {
+                                const navLogo = navElement.querySelector('.nav__logo');
                                 gsap.set(navElement, { position: "absolute", zIndex: 1001 });
+                                // Keep nav logo hidden after cleanup using both GSAP and CSS class
+                                if (navLogo) {
+                                    gsap.set(navLogo, { opacity: 0 });
+                                    navLogo.classList.add('nav-logo-hidden');
+                                }
                             }
                             if (mainElement) {
                                 gsap.set(mainElement, { position: "relative", zIndex: "auto" });
@@ -94,7 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 opacity: 0,
                 ease: "power2.out",
                 duration: 0.25 // Takes up remaining 25% of timeline
-            });
+            })
+            // Hide nav logo at the same time as splash fades out
+            .to(navElement ? navElement.querySelector('.nav__logo') : null, {
+                opacity: 0,
+                ease: "power2.out",
+                duration: 0.25
+            }, "-=0.25"); // Start at same time as splash fade
         }
         
         // Wait for video metadata to load
@@ -223,6 +235,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         window.addEventListener('scroll', requestTick, { passive: true });
+    }
+    
+    // Fixed header visibility on scroll
+    const fixedHeader = document.getElementById('fixedHeader');
+    const mainContent = document.querySelector('.main');
+    
+    if (fixedHeader && mainContent && typeof gsap !== 'undefined') {
+        // Create ScrollTrigger for fixed header visibility
+        gsap.registerPlugin(ScrollTrigger);
+        
+        ScrollTrigger.create({
+            trigger: mainContent,
+            start: "top center", // Show header when main content reaches center of viewport
+            end: "bottom bottom",
+            onEnter: () => {
+                console.log('Showing fixed header');
+                fixedHeader.classList.add('show');
+            },
+            onLeave: () => {
+                console.log('Hiding fixed header (scrolled past main)');
+                fixedHeader.classList.remove('show');
+            },
+            onEnterBack: () => {
+                console.log('Showing fixed header (scrolled back into main)');
+                fixedHeader.classList.add('show');
+            },
+            onLeaveBack: () => {
+                console.log('Hiding fixed header (scrolled back above main)');
+                fixedHeader.classList.remove('show');
+            }
+        });
     }
     
     // Smooth scroll for shark tooth arrow - disabled during video scrubbing

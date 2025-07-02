@@ -160,6 +160,87 @@ img {
     }
 }
 
+// Hide nav logo after splash animation
+.nav-logo-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+// Fixed Header Overlay
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 1rem 2rem; // Same padding as nav
+    
+    &.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    &__container {
+        display: flex;
+        align-items: center;
+        max-width: 1200px; // Same max-width as nav
+        width: 100%;
+        margin: 0 auto; // Same centering as nav
+        background: transparent;
+        padding: 0;
+    }
+    
+    &__logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    &__oc-logo {
+        height: 94px; // Same as nav logo
+        width: 151px; // Same as nav logo
+        object-fit: contain;
+    }
+    
+    &__separator {
+        width: 1px;
+        height: 60px; // Taller to match larger logos
+        background: #cccccc;
+        opacity: 0.8;
+        margin: 0 20px; // Space around separator
+    }
+    
+    &__shark-logo {
+        height: 80px; // Proportional to nav logo height
+        width: auto;
+        object-fit: contain;
+    }
+    
+    @media (max-width: $mobile) {
+        padding: 0.75rem 1rem; // Same as nav mobile padding
+        
+        &__container {
+            padding: 8px 16px;
+        }
+        
+        &__oc-logo {
+            height: 60px; // Smaller for mobile
+            width: auto;
+        }
+        
+        &__separator {
+            height: 40px;
+            margin: 0 15px;
+        }
+        
+        &__shark-logo {
+            height: 50px;
+        }
+    }
+}
+
 // Splash Section
 .splash {
     position: relative;
