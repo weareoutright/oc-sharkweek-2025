@@ -39,11 +39,14 @@
     <!-- Splash Panel -->
     <section class="splash">
         <div class="splash__background">
-            <img src="assets/images/splash-video-placeholder.jpg" alt="Shark Week Hero" class="splash__image">
+            <video autoplay muted playsinline class="splash__video">
+                <source src="assets/videos/Hero_v1-H264.mp4" type="video/mp4">
+                <img src="assets/images/splash-video-placeholder.jpg" alt="Shark Week Hero" class="splash__image">
+            </video>
         </div>
         
         <div class="splash__content">
-            <h1 class="splash__title">IT'S CRUNCH TIME</h1>
+            <h1 class="splash__title assistive-text">IT'S CRUNCH TIME</h1>
         </div>
         
         <div class="splash__scroll-indicator">
@@ -280,6 +283,7 @@
     </footer>
 
     <script src="node_modules/gsap/dist/gsap.min.js"></script>
+    <script src="node_modules/gsap/dist/ScrollTrigger.min.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

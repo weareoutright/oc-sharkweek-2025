@@ -2,6 +2,112 @@
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Scroll-controlled splash video with GSAP
+    const splashVideo = document.querySelector('.splash__video');
+    const splashSection = document.querySelector('.splash');
+    
+    console.log('Video element found:', !!splashVideo);
+    console.log('Splash section found:', !!splashSection);
+    console.log('GSAP available:', typeof gsap !== 'undefined');
+    
+    if (splashVideo && splashSection && typeof gsap !== 'undefined') {
+        // Register ScrollTrigger plugin first
+        gsap.registerPlugin(ScrollTrigger);
+        console.log('ScrollTrigger registered');
+        
+        // Disable autoplay and ensure video is ready
+        splashVideo.removeAttribute('autoplay');
+        splashVideo.currentTime = 0;
+        splashVideo.preload = 'metadata';
+        
+        // Force load the video
+        splashVideo.load();
+        
+        function setupScrollTrigger() {
+            console.log('Setting up ScrollTrigger - Video duration:', splashVideo.duration);
+            
+            const navElement = document.querySelector('.nav');
+            const mainElement = document.querySelector('.main');
+            
+            // Fix elements in place during animation
+            gsap.set(splashSection, { position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000 });
+            if (navElement) {
+                gsap.set(navElement, { position: "fixed", top: 0, left: 0, right: 0, zIndex: 1001 });
+            }
+            if (mainElement) {
+                gsap.set(mainElement, { position: "fixed", top: 0, left: 0, right: 0, zIndex: 1 });
+            }
+            
+            // Create invisible spacer to enable scrolling without moving content
+            const spacer = document.createElement('div');
+            spacer.style.height = '800vh';
+            spacer.style.width = '1px';
+            spacer.style.position = 'absolute';
+            spacer.style.top = '0';
+            spacer.style.left = '0';
+            spacer.style.pointerEvents = 'none';
+            spacer.style.zIndex = '-1';
+            document.body.appendChild(spacer);
+            
+            // Create timeline for video scrubbing and splash fade
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: spacer,
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: 1,
+                    markers: true,
+                    onUpdate: function(self) {
+                        console.log('Animation progress:', self.progress);
+                        
+                        // When animation reaches ~87% (since that seems to be max), clean up and enable normal scrolling
+                        if (self.progress >= 0.85) {
+                            console.log('Animation complete - cleaning up at progress:', self.progress);
+                            gsap.set(splashSection, { display: "none" }); // Hide splash completely
+                            if (navElement) {
+                                gsap.set(navElement, { position: "absolute", zIndex: 1001 });
+                            }
+                            if (mainElement) {
+                                gsap.set(mainElement, { position: "relative", zIndex: "auto" });
+                            }
+                            // Remove spacer and reset scroll position
+                            if (document.body.contains(spacer)) {
+                                document.body.removeChild(spacer);
+                            }
+                            window.scrollTo(0, 0);
+                            // Refresh ScrollTrigger to recalculate after layout changes
+                            ScrollTrigger.refresh();
+                        }
+                    }
+                }
+            });
+            
+            // Video scrubbing (0% - 75% of scroll range)
+            tl.to(splashVideo, {
+                currentTime: splashVideo.duration,
+                ease: "none",
+                duration: 0.75 // Takes up 75% of timeline
+            });
+            
+            // Splash fade out (75% - 100% of scroll range)
+            tl.to(splashSection, {
+                opacity: 0,
+                ease: "power2.out",
+                duration: 0.25 // Takes up remaining 25% of timeline
+            });
+        }
+        
+        // Wait for video metadata to load
+        splashVideo.addEventListener('loadedmetadata', setupScrollTrigger);
+        
+        // Also try after a short delay in case metadata is already loaded
+        setTimeout(() => {
+            if (splashVideo.readyState >= 1 && splashVideo.duration) {
+                setupScrollTrigger();
+            }
+        }, 500);
+    }
+
     // Shark fin scroll animation with GSAP
     const sharkFin = document.querySelector('.footer__shark-fin');
     
@@ -119,14 +225,15 @@ document.addEventListener('DOMContentLoaded', function() {
         window.addEventListener('scroll', requestTick, { passive: true });
     }
     
-    // Smooth scroll for shark tooth arrow
+    // Smooth scroll for shark tooth arrow - disabled during video scrubbing
     const scrollArrow = document.querySelector('.splash__arrow');
     if (scrollArrow) {
-        scrollArrow.addEventListener('click', function() {
-            document.querySelector('.main').scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
+        // Remove click functionality since splash is now fixed during video playback
+        // scrollArrow.addEventListener('click', function() {
+        //     document.querySelector('.main').scrollIntoView({
+        //         behavior: 'smooth'
+        //     });
+        // });
     }
     
     // Newsletter form submission
