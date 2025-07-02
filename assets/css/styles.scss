@@ -406,9 +406,21 @@ img {
         object-fit: cover;
     }
 
+    &.cta-donate {
+        .cta__image {
+            margin-left: -.6rem;
+        }
+    }
+
     &.cta-signup {
         .cta__image {
-            margin-left: -1rem;
+            margin-left: -2.3rem;
+        }
+    }
+
+    &.cta-cleanup {
+        .cta__image {
+            margin-left: -.6rem;
         }
     }
 
