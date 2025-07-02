@@ -6,6 +6,7 @@ A static website celebrating Ocean Conservancy's partnership with Discovery's Sh
 
 - **Responsive Design**: Mobile-first approach with desktop enhancements
 - **Video Integration**: Hero section with promotional video content
+- **GSAP Animations**: Scroll-controlled video scrubbing, fixed header transitions, and bidirectional shark fin animations
 - **Layered Visuals**: Innovative CTA design with sharks extending beyond frame boundaries
 - **Ocean Conservancy Footer**: Complete integration with social media, newsletter signup, and certifications
 - **Accessibility**: Screen reader support and rem-based typography scaling
@@ -43,10 +44,20 @@ Visit `http://localhost:8000` to view the site.
 │   │   └── styles.css      # Compiled CSS (auto-generated)
 │   ├── images/             # Figma exports and assets
 │   ├── videos/             # Video content
-│   └── js/                 # JavaScript functionality
+│   └── js/
+│       └── main.js         # GSAP animations and interactions
+├── node_modules/gsap/      # GSAP animation library
 ├── screenshot.js           # Puppeteer automation
 └── package.json           # Dependencies and scripts
 ```
+
+## ⚡ Animation Features
+
+### GSAP Integration
+- **Scroll-Controlled Video**: Hero video scrubs based on scroll position
+- **Fixed Header Transition**: Smooth logo transition from nav to fixed header
+- **Bidirectional Shark Fin**: Swimming animation with horizontal flipping
+- **ScrollTrigger**: Advanced scroll-based animations and triggers
 
 ## 🎨 Design System
 

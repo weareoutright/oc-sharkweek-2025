@@ -2,6 +2,13 @@
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Clean up any leftover spacer elements from previous sessions
+    const oldSpacer = document.getElementById('scroll-spacer');
+    if (oldSpacer) {
+        oldSpacer.remove();
+        console.log('Cleaned up leftover spacer element');
+    }
+    
     // Scroll-controlled splash video with GSAP
     const splashVideo = document.querySelector('.splash__video');
     const splashSection = document.querySelector('.splash');
@@ -47,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             spacer.style.left = '0';
             spacer.style.pointerEvents = 'none';
             spacer.style.zIndex = '-1';
+            spacer.id = 'scroll-spacer'; // Add ID for easier tracking
             document.body.appendChild(spacer);
             
             // Create timeline for video scrubbing and splash fade
@@ -56,10 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     start: "top top",
                     end: "bottom top",
                     scrub: 1,
-                    markers: true,
+                    markers: false, // Disable debug markers
                     onUpdate: function(self) {
-                        console.log('Animation progress:', self.progress);
-                        
                         // When animation reaches ~87% (since that seems to be max), clean up and enable normal scrolling
                         if (self.progress >= 0.85) {
                             console.log('Animation complete - cleaning up at progress:', self.progress);
@@ -73,16 +79,41 @@ document.addEventListener('DOMContentLoaded', function() {
                                     navLogo.classList.add('nav-logo-hidden');
                                 }
                             }
+                            
+                            // More robust spacer removal
+                            const existingSpacer = document.getElementById('scroll-spacer');
+                            if (existingSpacer) {
+                                existingSpacer.remove();
+                                console.log('Spacer removed successfully');
+                            }
+                            
+                            // Instead of changing positioning immediately, smoothly transition
                             if (mainElement) {
-                                gsap.set(mainElement, { position: "relative", zIndex: "auto" });
+                                // First, move main element to the top while still fixed
+                                gsap.set(mainElement, { top: "0px" });
+                                
+                                // Then transition to relative positioning after a brief moment
+                                setTimeout(() => {
+                                    gsap.set(mainElement, { 
+                                        position: "relative", 
+                                        zIndex: "auto",
+                                        top: "auto" 
+                                    });
+                                    window.scrollTo(0, 0);
+                                    ScrollTrigger.refresh();
+                                }, 50);
                             }
-                            // Remove spacer and reset scroll position
-                            if (document.body.contains(spacer)) {
-                                document.body.removeChild(spacer);
-                            }
-                            window.scrollTo(0, 0);
-                            // Refresh ScrollTrigger to recalculate after layout changes
-                            ScrollTrigger.refresh();
+                            
+                            // Kill this ScrollTrigger to prevent further callbacks
+                            this.kill();
+                        }
+                    },
+                    onComplete: function() {
+                        // Fallback cleanup in case onUpdate doesn't trigger
+                        console.log('ScrollTrigger complete - fallback cleanup');
+                        const existingSpacer = document.getElementById('scroll-spacer');
+                        if (existingSpacer) {
+                            existingSpacer.remove();
                         }
                     }
                 }
