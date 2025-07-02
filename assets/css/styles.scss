@@ -83,12 +83,12 @@ img {
     }
 
     &__logo {
-        height: 48px;
-        width: auto;
+        height: 94px;
+        width: 151px;
         
         img {
-            height: 48px;
-            width: auto;
+            height: 94px;
+            width: 151px;
             max-width: none;
             object-fit: contain;
         }
@@ -117,7 +117,7 @@ img {
         text-decoration: none;
         text-align: center;
         letter-spacing: -0.0375rem; // -0.6px
-        line-height: 1.5rem; // 24px
+        line-height: 1.2; // 24px / 20px = 1.2
         white-space: nowrap;
         transition: color 0.3s ease;
 
@@ -134,7 +134,7 @@ img {
             font-size: 1.25rem; // 20px
             font-weight: 500;
             letter-spacing: 0.2rem; // 3.2px
-            line-height: 1.5rem; // 24px
+            line-height: 1.2; // 24px / 20px = 1.2
             text-align: center;
             text-transform: uppercase;
             white-space: nowrap;
@@ -197,7 +197,7 @@ img {
         color: $white;
         text-shadow: rgba(0, 0, 0, 0.3) -4px 4px 15px;
         margin: 0;
-        line-height: 0.9;
+        line-height: 0.9; // Already unitless
         letter-spacing: -0.298125rem; // -4.77px
         text-transform: uppercase;
         text-align: center;
@@ -234,7 +234,7 @@ img {
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.21rem; // 3.36px
-        line-height: 2.1875rem; // 35px
+        line-height: 1.67; // 35px / 21px = 1.67
         white-space: nowrap;
     }
 
@@ -313,6 +313,7 @@ img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        padding-left: 2rem;
     }
 
     &__play-button {
@@ -344,13 +345,20 @@ img {
         margin-top: -2rem;
     }
 
+    &.cta-video {
+        .cta__content {
+            padding-right: 2rem;
+            padding-top: 2rem;
+        }
+    }
+
     &__title {
         font-family: 'Roboto', sans-serif;
         font-size: 3.5rem; // 56px
         font-weight: 700;
         color: $white;
         margin: 0 0 1rem 0;
-        line-height: 3.375rem; // 54px
+        line-height: 0.96; // 54px / 56px = 0.96
         text-align: left;
 
         @media (max-width: $mobile) {
@@ -365,7 +373,7 @@ img {
         font-weight: 400;
         color: $white;
         margin: 0 0 1.5rem 0;
-        line-height: 1.75rem; // 28px
+        line-height: 1.4; // 28px / 20px = 1.4
         text-align: left;
     }
 
@@ -375,7 +383,7 @@ img {
         font-weight: 400;
         color: $white;
         margin: 0 0 0.25rem 0;
-        line-height: 2.1875rem; // 35px
+        line-height: 1.46; // 35px / 24px = 1.46
         text-align: left;
     }
 
@@ -385,7 +393,7 @@ img {
         font-weight: 600;
         color: $white;
         margin: 0 0 1rem 0; // Double the space before line 3
-        line-height: 2.4375rem; // 39px
+        line-height: 1.34; // 39px / 29px = 1.34
         text-align: left;
     }
 
@@ -395,9 +403,8 @@ img {
         font-weight: 500;
         color: $white;
         margin: 0;
-        line-height: 2.5rem; // 40px
+        line-height: 2; // 40px / 20px = 2
         text-align: left;
-        white-space: nowrap;
     }
 
     &__button {
@@ -413,7 +420,7 @@ img {
         letter-spacing: 0.2rem; // 3.2px
         text-transform: uppercase;
         text-align: center;
-        line-height: 1.2;
+        line-height: 1.2; // Already unitless
         white-space: nowrap;
         width: auto;
         transition: all 0.3s ease;
