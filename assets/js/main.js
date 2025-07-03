@@ -129,6 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                         // Set up nav positioning ScrollTrigger after splash cleanup
                                         setupNavPositioning();
                                         
+                                        // Set up CTA depth blur effects
+                                        setupCTADepthEffects();
+                                        
                                         ScrollTrigger.refresh();
                                     }, 50); // Additional delay to ensure smooth transition
                                 }, 50); // Shorter initial delay since scroll is already reset
@@ -207,6 +210,105 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 onLeaveBack: () => {
                     console.log('CTA1 moved above nav - fading in nav');
+                }
+            });
+        }
+    }
+
+    // Function to set up CTA depth blur effects
+    function setupCTADepthEffects() {
+        const ctas = document.querySelectorAll('.cta');
+        
+        if (ctas.length > 0 && typeof gsap !== 'undefined') {
+            console.log('Setting up CTA depth blur effects for', ctas.length, 'CTAs');
+            
+            ctas.forEach((cta, index) => {
+                // Get individual elements within each CTA
+                const ctaImage = cta.querySelector('.cta__image, .cta__video');
+                const ctaContent = cta.querySelector('.cta__content');
+                
+                // Set initial blur state for image (deep underwater)
+                if (ctaImage) {
+                    gsap.set(ctaImage, { 
+                        filter: "blur(10px)",
+                        opacity: 0.6,
+                        scale: 1.08 // Images appear larger when deep
+                    });
+                }
+                
+                // Set initial blur state for content (slightly less blurred, like closer to surface)
+                if (ctaContent) {
+                    gsap.set(ctaContent, { 
+                        filter: "blur(6px)",
+                        opacity: 0.75,
+                        scale: 1.03, // Text appears slightly larger when deep
+                        y: 10 // Text starts slightly lower, like floating up
+                    });
+                }
+                
+                // Separate ScrollTrigger for images (faster clearing)
+                if (ctaImage) {
+                    ScrollTrigger.create({
+                        trigger: cta,
+                        start: "top bottom", // When CTA starts entering viewport
+                        end: "top 50%", // When CTA is half visible
+                        scrub: true,
+                        onUpdate: (self) => {
+                            const progress = self.progress;
+                            
+                            // Image blur decreases from 10px to 0px
+                            const imageBlur = 10 * (1 - progress);
+                            // Image opacity increases from 0.6 to 1
+                            const imageOpacity = 0.6 + (0.4 * progress);
+                            // Image scale decreases from 1.08 to 1
+                            const imageScale = 1.08 - (0.08 * progress);
+                            
+                            gsap.to(ctaImage, {
+                                filter: `blur(${imageBlur}px)`,
+                                opacity: imageOpacity,
+                                scale: imageScale,
+                                duration: 0.1,
+                                ease: "none"
+                            });
+                        }
+                    });
+                }
+                
+                // Separate ScrollTrigger for text (slower clearing for better visibility)
+                if (ctaContent) {
+                    ScrollTrigger.create({
+                        trigger: cta,
+                        start: "top 80%", // When CTA is 20% into viewport (more visible)
+                        end: "top 20%", // When CTA is 80% visible (nearly fully in view)
+                        scrub: true,
+                        onUpdate: (self) => {
+                            const progress = self.progress;
+                            
+                            // Text blur decreases from 6px to 0px
+                            const textBlur = 6 * (1 - progress);
+                            // Text opacity increases from 0.75 to 1
+                            const textOpacity = 0.75 + (0.25 * progress);
+                            // Text scale decreases from 1.03 to 1
+                            const textScale = 1.03 - (0.03 * progress);
+                            // Text floats up from y: 10 to y: 0
+                            const textY = 10 * (1 - progress);
+                            
+                            gsap.to(ctaContent, {
+                                filter: `blur(${textBlur}px)`,
+                                opacity: textOpacity,
+                                scale: textScale,
+                                y: textY,
+                                duration: 0.1,
+                                ease: "none"
+                            });
+                        },
+                        onEnter: () => {
+                            console.log(`CTA ${index + 1} text emerging from depth`);
+                        },
+                        onLeaveBack: () => {
+                            console.log(`CTA ${index + 1} text sinking back to depth`);
+                        }
+                    });
                 }
             });
         }
