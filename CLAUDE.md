@@ -61,3 +61,5 @@ When styling components, always reference Figma selections for exact typography,
 - **Typography Changes**: Convert pixel values to rem equivalents (divide by 16)
 - **Footer Integration**: Footer uses extracted Ocean Conservancy WordPress theme styles
 - **Accessibility**: Include `assistive-text` class for screen reader content
+- **Version Control**: Detailed commit messages
+- **Version Control**: Do not include Claude attribution in commit messages
