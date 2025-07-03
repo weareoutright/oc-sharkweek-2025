@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Create invisible spacer to enable scrolling without moving content
             const spacer = document.createElement('div');
-            spacer.style.height = '800vh';
+            spacer.style.height = '400vh';
             spacer.style.width = '1px';
             spacer.style.position = 'absolute';
             spacer.style.top = '0';
