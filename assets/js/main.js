@@ -6,21 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const oldSpacer = document.getElementById('scroll-spacer');
     if (oldSpacer) {
         oldSpacer.remove();
-        console.log('Cleaned up leftover spacer element');
     }
     
     // Scroll-controlled splash video with GSAP
     const splashVideo = document.querySelector('.splash__video');
     const splashSection = document.querySelector('.splash');
     
-    console.log('Video element found:', !!splashVideo);
-    console.log('Splash section found:', !!splashSection);
-    console.log('GSAP available:', typeof gsap !== 'undefined');
     
     if (splashVideo && splashSection && typeof gsap !== 'undefined') {
         // Register ScrollTrigger plugin first
         gsap.registerPlugin(ScrollTrigger);
-        console.log('ScrollTrigger registered');
         
         // Disable autoplay and ensure video is ready
         splashVideo.removeAttribute('autoplay');
@@ -31,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         splashVideo.load();
         
         function setupScrollTrigger() {
-            console.log('Setting up ScrollTrigger - Video duration:', splashVideo.duration);
             
             const navElement = document.querySelector('.nav');
             const mainElement = document.querySelector('.main');
@@ -47,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Create invisible spacer to enable scrolling without moving content
             const spacer = document.createElement('div');
-            spacer.style.height = '400vh';
+            spacer.style.height = '500vh';
             spacer.style.width = '1px';
             spacer.style.position = 'absolute';
             spacer.style.top = '0';
@@ -66,9 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     scrub: 1,
                     markers: false, // Disable debug markers
                     onUpdate: function(self) {
-                        // When animation reaches ~87% (since that seems to be max), clean up and enable normal scrolling
-                        if (self.progress >= 0.85) {
-                            console.log('Animation complete - cleaning up at progress:', self.progress);
+                        // When animation reaches ~75% (during splash fade), clean up and enable normal scrolling
+                        if (self.progress >= 0.75) {
                             
                             // Get footer element to manage its z-index during transition
                             const footerElement = document.querySelector('footer');
@@ -96,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             const existingSpacer = document.getElementById('scroll-spacer');
                             if (existingSpacer) {
                                 existingSpacer.remove();
-                                console.log('Spacer removed successfully');
                             }
                             
                             // Instead of changing positioning immediately, smoothly transition
@@ -143,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     onComplete: function() {
                         // Fallback cleanup in case onUpdate doesn't trigger
-                        console.log('ScrollTrigger complete - fallback cleanup');
                         const existingSpacer = document.getElementById('scroll-spacer');
                         if (existingSpacer) {
                             existingSpacer.remove();
@@ -152,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Video scrubbing (0% - 75% of scroll range) with keyframe-aware seeking
+            // Video scrubbing (0% - 65% of scroll range) with keyframe-aware seeking
             let lastTargetTime = 0;
             let seekThrottle = 0;
             let problemAreaStart = 1.8; // Start of transition area
@@ -161,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tl.to(splashVideo, {
                 currentTime: splashVideo.duration,
                 ease: "none",
-                duration: 0.75, // Takes up 75% of timeline
+                duration: 0.65, // Takes up 65% of timeline
                 onUpdate: function() {
                     const scrollProgress = this.progress();
                     const targetTime = scrollProgress * splashVideo.duration;
@@ -177,10 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     let minTargetChange = inProblemArea ? 0.05 : 0.02; // Larger change required in problem area
                     let throttleTime = inProblemArea ? 33 : 16; // Slower seeking in problem area (~30fps vs 60fps)
                     
-                    // Enhanced logging for problem area
-                    if (inProblemArea || Math.random() < 0.03) {
-                        console.log(`Video scrub ${inProblemArea ? '[TRANSITION]' : ''} - Scroll: ${(scrollProgress * 100).toFixed(1)}%, Target: ${targetTime.toFixed(3)}s, Current: ${currentTime.toFixed(3)}s, Diff: ${timeDifference.toFixed(3)}s`);
-                    }
                     
                     // Keyframe-aware seeking logic
                     if (timeDifference > minTimeDiff && 
@@ -191,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         try {
                             if (typeof splashVideo.fastSeek === 'function') {
                                 splashVideo.fastSeek(targetTime);
-                                console.log(`FastSeek to: ${targetTime.toFixed(3)}s`);
                             } else {
                                 // In problem area, allow larger tolerance to avoid micro-seeks
                                 if (inProblemArea && timeDifference < 0.2) {
@@ -201,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 splashVideo.currentTime = targetTime;
                             }
                         } catch (e) {
-                            console.warn('Seek failed:', e);
                             // Fallback to basic seeking
                             splashVideo.currentTime = targetTime;
                         }
@@ -212,11 +197,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Splash fade out (75% - 100% of scroll range)
+            // Splash fade out (65% - 100% of scroll range)
             tl.to(splashSection, {
                 opacity: 0,
                 ease: "power2.out",
-                duration: 0.25 // Takes up remaining 25% of timeline
+                duration: 0.35 // Takes up remaining 35% of timeline
             })
             // Hide nav logo at the same time as splash fades out
             .to(navElement ? navElement.querySelector('.nav__logo') : null, {
@@ -243,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const cta1 = document.querySelector('.cta-video'); // First CTA element
         
         if (navElement && cta1 && typeof gsap !== 'undefined') {
-            console.log('Setting up nav fade ScrollTrigger');
             
             // Get nav height to calculate when CTA1 reaches bottom of nav
             const navHeight = navElement.offsetHeight;
@@ -258,12 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const opacity = 1 - self.progress;
                     gsap.to(navElement, { opacity: opacity, duration: 0.1 });
                 },
-                onEnter: () => {
-                    console.log('CTA1 reached nav bottom - fading out nav');
-                },
-                onLeaveBack: () => {
-                    console.log('CTA1 moved above nav - fading in nav');
-                }
+                onEnter: () => {},
+                onLeaveBack: () => {}
             });
         }
     }
@@ -273,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctas = document.querySelectorAll('.cta');
         
         if (ctas.length > 0 && typeof gsap !== 'undefined') {
-            console.log('Setting up CTA depth blur effects for', ctas.length, 'CTAs');
             
             ctas.forEach((cta, index) => {
                 // Get individual elements within each CTA
@@ -355,12 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ease: "none"
                             });
                         },
-                        onEnter: () => {
-                            console.log(`CTA ${index + 1} text emerging from depth`);
-                        },
-                        onLeaveBack: () => {
-                            console.log(`CTA ${index + 1} text sinking back to depth`);
-                        }
+                        onEnter: () => {},
+                        onLeaveBack: () => {}
                     });
                 }
             });
@@ -384,7 +359,6 @@ document.addEventListener('DOMContentLoaded', function() {
             scaleX: 1 // Facing right initially
         });
         
-        console.log('Shark fin animation initialized - starting at Y:', 0);
         
         function updateFinPosition() {
             const currentScrollY = window.pageYOffset;
@@ -421,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         movingRight = false;
                         finPosition = viewportWidth + 104;
                         gsap.set(sharkFin, { scaleX: -1 }); // Flip horizontally
-                        console.log('Flipping to move left');
                     }
                 } else {
                     // Moving left: check if we've gone off-screen left
@@ -430,7 +403,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         movingRight = true;
                         finPosition = -104;
                         gsap.set(sharkFin, { scaleX: 1 }); // Flip back to normal
-                        console.log('Flipping to move right');
                     }
                 }
                 
@@ -513,19 +485,15 @@ document.addEventListener('DOMContentLoaded', function() {
             start: "top center", // Show header when main content reaches center of viewport
             end: "bottom bottom",
             onEnter: () => {
-                console.log('Showing fixed header');
                 fixedHeader.classList.add('show');
             },
             onLeave: () => {
-                console.log('Hiding fixed header (scrolled past main)');
                 fixedHeader.classList.remove('show');
             },
             onEnterBack: () => {
-                console.log('Showing fixed header (scrolled back into main)');
                 fixedHeader.classList.add('show');
             },
             onLeaveBack: () => {
-                console.log('Hiding fixed header (scrolled back above main)');
                 fixedHeader.classList.remove('show');
             }
         });
