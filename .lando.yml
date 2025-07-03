@@ -1,0 +1,4 @@
+name: sharkweek2025
+recipe: lamp
+config:
+  webroot: .
