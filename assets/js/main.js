@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const navElement = document.querySelector('.nav');
             const mainElement = document.querySelector('.main');
             
+            // Track if cleanup has already been executed
+            let cleanupExecuted = false;
+            
             // Fix elements in place during animation
             gsap.set(splashSection, { position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000 });
             if (navElement) {
@@ -101,7 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     markers: false, // Disable debug markers
                     onUpdate: function(self) {
                         // When animation reaches ~75% (during splash fade), clean up and enable normal scrolling
-                        if (self.progress >= 0.75) {
+                        if (self.progress >= 0.75 && !cleanupExecuted) {
+                            cleanupExecuted = true;
                             
                             // Get footer element to manage its z-index during transition
                             const footerElement = document.querySelector('footer');
@@ -136,9 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // First, move main element to the top while still fixed
                                 gsap.set(mainElement, { top: "0px", zIndex: 100 }); // Ensure main is on top during transition
                                 
-                                // Reset scroll position BEFORE changing position to prevent footer flash
-                                window.scrollTo(0, 0);
-                                
                                 // Then transition to relative positioning after a brief moment
                                 setTimeout(() => {
                                     // Hide footer during transition to prevent flash
@@ -170,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                             
                             // Kill this ScrollTrigger to prevent further callbacks
-                            this.kill();
+                            self.kill();
                         }
                     },
                     onComplete: function() {
