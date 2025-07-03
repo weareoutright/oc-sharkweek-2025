@@ -2,6 +2,9 @@
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Reset scroll position to top on page load
+    window.scrollTo(0, 0);
+    
     // Clean up any leftover spacer elements from previous sessions
     const oldSpacer = document.getElementById('scroll-spacer');
     if (oldSpacer) {
@@ -11,6 +14,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Scroll-controlled splash video with GSAP
     const splashVideo = document.querySelector('.splash__video');
     const splashSection = document.querySelector('.splash');
+    
+    // Force complete video reset on page load
+    if (splashVideo) {
+        splashVideo.currentTime = 0;
+        splashVideo.pause();
+        splashVideo.load(); // Force reload from source
+    }
+    
+    // Reset splash section visibility and opacity
+    if (splashSection) {
+        splashSection.style.display = '';
+        splashSection.style.opacity = '1';
+        splashSection.style.position = '';
+        splashSection.style.zIndex = '';
+    }
+    
+    // Reset navigation elements
+    const navElement = document.querySelector('.nav');
+    if (navElement) {
+        navElement.style.position = '';
+        navElement.style.zIndex = '';
+        navElement.style.opacity = '1';
+        
+        const navLogo = navElement.querySelector('.nav__logo');
+        if (navLogo) {
+            navLogo.style.opacity = '';
+            navLogo.classList.remove('nav-logo-hidden');
+        }
+    }
+    
+    // Reset main content positioning
+    const mainElement = document.querySelector('.main');
+    if (mainElement) {
+        mainElement.style.position = '';
+        mainElement.style.top = '';
+        mainElement.style.zIndex = '';
+    }
     
     
     if (splashVideo && splashSection && typeof gsap !== 'undefined') {
@@ -522,4 +562,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
+
+// Clean up on page unload to ensure fresh state on refresh
+window.addEventListener('beforeunload', function() {
+    // Kill all ScrollTriggers
+    if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.killAll();
+    }
+    
+    // Reset video state
+    const splashVideo = document.querySelector('.splash__video');
+    if (splashVideo) {
+        splashVideo.currentTime = 0;
+        splashVideo.pause();
+    }
+    
+    // Reset scroll position
+    window.scrollTo(0, 0);
 });
