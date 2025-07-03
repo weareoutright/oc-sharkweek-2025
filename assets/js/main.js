@@ -152,11 +152,64 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Video scrubbing (0% - 75% of scroll range)
+            // Video scrubbing (0% - 75% of scroll range) with keyframe-aware seeking
+            let lastTargetTime = 0;
+            let seekThrottle = 0;
+            let problemAreaStart = 1.8; // Start of transition area
+            let problemAreaEnd = 2.3;   // End of transition area
+            
             tl.to(splashVideo, {
                 currentTime: splashVideo.duration,
                 ease: "none",
-                duration: 0.75 // Takes up 75% of timeline
+                duration: 0.75, // Takes up 75% of timeline
+                onUpdate: function() {
+                    const scrollProgress = this.progress();
+                    const targetTime = scrollProgress * splashVideo.duration;
+                    const currentTime = splashVideo.currentTime;
+                    const timeDifference = Math.abs(currentTime - targetTime);
+                    const now = Date.now();
+                    
+                    // Check if we're in the problematic transition area
+                    const inProblemArea = targetTime >= problemAreaStart && targetTime <= problemAreaEnd;
+                    
+                    // Adjust seeking behavior based on location in video
+                    let minTimeDiff = inProblemArea ? 0.1 : 0.05;  // Larger threshold in problem area
+                    let minTargetChange = inProblemArea ? 0.05 : 0.02; // Larger change required in problem area
+                    let throttleTime = inProblemArea ? 33 : 16; // Slower seeking in problem area (~30fps vs 60fps)
+                    
+                    // Enhanced logging for problem area
+                    if (inProblemArea || Math.random() < 0.03) {
+                        console.log(`Video scrub ${inProblemArea ? '[TRANSITION]' : ''} - Scroll: ${(scrollProgress * 100).toFixed(1)}%, Target: ${targetTime.toFixed(3)}s, Current: ${currentTime.toFixed(3)}s, Diff: ${timeDifference.toFixed(3)}s`);
+                    }
+                    
+                    // Keyframe-aware seeking logic
+                    if (timeDifference > minTimeDiff && 
+                        Math.abs(targetTime - lastTargetTime) > minTargetChange && 
+                        now - seekThrottle > throttleTime) {
+                        
+                        // Try fastSeek if available, fallback to regular seeking
+                        try {
+                            if (typeof splashVideo.fastSeek === 'function') {
+                                splashVideo.fastSeek(targetTime);
+                                console.log(`FastSeek to: ${targetTime.toFixed(3)}s`);
+                            } else {
+                                // In problem area, allow larger tolerance to avoid micro-seeks
+                                if (inProblemArea && timeDifference < 0.2) {
+                                    // Skip seeking if we're close enough in problem area
+                                    return;
+                                }
+                                splashVideo.currentTime = targetTime;
+                            }
+                        } catch (e) {
+                            console.warn('Seek failed:', e);
+                            // Fallback to basic seeking
+                            splashVideo.currentTime = targetTime;
+                        }
+                        
+                        lastTargetTime = targetTime;
+                        seekThrottle = now;
+                    }
+                }
             });
             
             // Splash fade out (75% - 100% of scroll range)
