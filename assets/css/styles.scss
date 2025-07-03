@@ -230,8 +230,8 @@ img {
         }
         
         &__oc-logo {
-            height: 60px; // Smaller for mobile
-            width: auto;
+            height: 94px; // Same as nav logo
+            width: 151px; // Same as nav logo
         }
         
         &__separator {
@@ -360,7 +360,7 @@ img {
 .main {
     position: relative;
     min-height: 100vh;
-    padding: 10rem 0;
+    padding: 100vh 0 0 0;
     background: url('../images/main-background.jpg') center center / cover fixed;
 
     &__background {

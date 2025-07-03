@@ -69,10 +69,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         // When animation reaches ~87% (since that seems to be max), clean up and enable normal scrolling
                         if (self.progress >= 0.85) {
                             console.log('Animation complete - cleaning up at progress:', self.progress);
-                            gsap.set(splashSection, { display: "none" }); // Hide splash completely
+                            
+                            // Get footer element to manage its z-index during transition
+                            const footerElement = document.querySelector('footer');
+                            
+                            // Hide splash completely
+                            gsap.set(splashSection, { display: "none" });
+                            
+                            // Temporarily lower footer z-index to prevent flash
+                            if (footerElement) {
+                                gsap.set(footerElement, { zIndex: -1 });
+                            }
+                            
                             if (navElement) {
                                 const navLogo = navElement.querySelector('.nav__logo');
-                                gsap.set(navElement, { position: "absolute", zIndex: 1001 });
+                                // Keep nav fixed until CTA1 reaches the bottom of nav
+                                gsap.set(navElement, { position: "fixed", zIndex: 1001 });
                                 // Keep nav logo hidden after cleanup using both GSAP and CSS class
                                 if (navLogo) {
                                     gsap.set(navLogo, { opacity: 0 });
@@ -90,18 +102,36 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Instead of changing positioning immediately, smoothly transition
                             if (mainElement) {
                                 // First, move main element to the top while still fixed
-                                gsap.set(mainElement, { top: "0px" });
+                                gsap.set(mainElement, { top: "0px", zIndex: 100 }); // Ensure main is on top during transition
+                                
+                                // Reset scroll position BEFORE changing position to prevent footer flash
+                                window.scrollTo(0, 0);
                                 
                                 // Then transition to relative positioning after a brief moment
                                 setTimeout(() => {
+                                    // Hide footer during transition to prevent flash
+                                    if (footerElement) {
+                                        gsap.set(footerElement, { visibility: "hidden" });
+                                    }
+                                    
                                     gsap.set(mainElement, { 
                                         position: "relative", 
                                         zIndex: "auto",
                                         top: "auto" 
                                     });
-                                    window.scrollTo(0, 0);
-                                    ScrollTrigger.refresh();
-                                }, 50);
+                                    
+                                    // Restore footer visibility and z-index after main element is properly positioned
+                                    setTimeout(() => {
+                                        if (footerElement) {
+                                            gsap.set(footerElement, { visibility: "visible", zIndex: 10 });
+                                        }
+                                        
+                                        // Set up nav positioning ScrollTrigger after splash cleanup
+                                        setupNavPositioning();
+                                        
+                                        ScrollTrigger.refresh();
+                                    }, 50); // Additional delay to ensure smooth transition
+                                }, 50); // Shorter initial delay since scroll is already reset
                             }
                             
                             // Kill this ScrollTrigger to prevent further callbacks
@@ -149,6 +179,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 setupScrollTrigger();
             }
         }, 500);
+    }
+
+    // Function to set up nav positioning after splash cleanup
+    function setupNavPositioning() {
+        const navElement = document.querySelector('.nav');
+        const cta1 = document.querySelector('.cta-video'); // First CTA element
+        
+        if (navElement && cta1 && typeof gsap !== 'undefined') {
+            console.log('Setting up nav fade ScrollTrigger');
+            
+            // Get nav height to calculate when CTA1 reaches bottom of nav
+            const navHeight = navElement.offsetHeight;
+            
+            ScrollTrigger.create({
+                trigger: cta1,
+                start: `top ${navHeight}px`, // When CTA1 top reaches bottom of nav
+                end: `top ${navHeight - 50}px`, // Fade over 50px range
+                scrub: true, // Smooth animation tied to scroll
+                onUpdate: (self) => {
+                    // Fade out nav as CTA1 approaches the bottom of nav
+                    const opacity = 1 - self.progress;
+                    gsap.to(navElement, { opacity: opacity, duration: 0.1 });
+                },
+                onEnter: () => {
+                    console.log('CTA1 reached nav bottom - fading out nav');
+                },
+                onLeaveBack: () => {
+                    console.log('CTA1 moved above nav - fading in nav');
+                }
+            });
+        }
     }
 
     // Shark fin scroll animation with GSAP
