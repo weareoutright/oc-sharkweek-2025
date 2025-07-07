@@ -531,6 +531,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Main background transition from fixed to scrolling when footer appears
+    const mainBackground = document.querySelector('.main__background');
+    const footer = document.querySelector('footer');
+    
+    if (mainBackground && footer && typeof gsap !== 'undefined') {
+        // Register ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+        
+        ScrollTrigger.create({
+            trigger: footer,
+            start: "top bottom", // When footer starts entering viewport
+            end: "top top",     // When footer reaches top of viewport
+            onEnter: () => {
+                // Calculate current scroll position to maintain visual continuity
+                const scrollY = window.pageYOffset;
+                
+                // Switch from fixed to absolute positioning
+                gsap.set(mainBackground, {
+                    position: "absolute",
+                    top: scrollY + "px", // Position it where it currently appears
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    zIndex: -1
+                });
+            },
+            onLeaveBack: () => {
+                // Return to fixed positioning when scrolling back up
+                gsap.set(mainBackground, {
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    zIndex: -1
+                });
+            }
+        });
+    }
+    
     // Smooth scroll for shark tooth arrow - disabled during video scrubbing
     const scrollArrow = document.querySelector('.splash__arrow');
     if (scrollArrow) {
