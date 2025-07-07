@@ -284,13 +284,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     start: `top ${-navHeight}px`, // Start fade when nav has scrolled its full height out of view
                     end: `top ${-navHeight - 60}px`, // Complete fade 60px later
                     onEnter: () => {
-                        // Fade in fixed header quickly
+                        // Fade in fixed header quickly and keep it visible
                         fixedHeader.classList.add('show');
-                    },
-                    onLeaveBack: () => {
-                        // Fade out fixed header when scrolling back up
-                        fixedHeader.classList.remove('show');
                     }
+                    // No onLeaveBack - fixed header stays visible once shown
                 });
             }
         }
