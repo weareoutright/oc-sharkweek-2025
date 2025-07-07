@@ -374,134 +374,114 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Shark fin scroll animation with GSAP
+    // Shark fin self-animating back and forth with GSAP
     const sharkFin = document.querySelector('.footer__shark-fin');
     
     if (sharkFin && typeof gsap !== 'undefined') {
-        let finPosition = 0; // Start position (left edge of screen)
-        let lastScrollY = window.pageYOffset;
-        let animationSpeed = 0.8; // Pixels per scroll unit
-        let movingRight = true; // Direction of movement
+        const viewportWidth = window.innerWidth;
         
-        // Set initial position
+        // Animation parameters
+        const emergenceDistanceVw = 20; // 20vw for emergence
+        const submersionDistanceVw = 25; // 25vw for submersion
+        const emergenceDistance = (emergenceDistanceVw / 100) * viewportWidth;
+        const submersionDistance = (submersionDistanceVw / 100) * viewportWidth;
+        const startY = 0; // Starting Y position (below footer)
+        const endY = -90; // Final Y position (fully emerged)
+        
+        // Set initial position (start off-screen left)
         gsap.set(sharkFin, { 
-            x: finPosition,
-            y: 0, // Start below footer edge
+            x: -104,
+            y: startY,
             opacity: 0,
             scaleX: 1 // Facing right initially
         });
         
-        
-        function updateFinPosition() {
-            const currentScrollY = window.pageYOffset;
-            const scrollDelta = Math.abs(currentScrollY - lastScrollY);
+        // Function to calculate Y position based on X position
+        function calculateYPosition(xPos, movingRight) {
+            let yPosition = startY;
             
-            // Move fin based on direction
-            if (scrollDelta > 0) {
-                if (movingRight) {
-                    finPosition += scrollDelta * animationSpeed;
-                } else {
-                    finPosition -= scrollDelta * animationSpeed;
+            if (movingRight) {
+                // Moving right: emerge from left, submerge to right
+                const emergenceProgress = Math.min(Math.max(xPos, 0), emergenceDistance);
+                if (emergenceProgress > 0) {
+                    const emergenceRatio = emergenceProgress / emergenceDistance;
+                    const easedEmergence = 1 - Math.pow(1 - emergenceRatio, 3);
+                    yPosition = startY + (endY - startY) * easedEmergence;
                 }
                 
-                const viewportWidth = window.innerWidth;
-                
-                // Calculate vertical position using vw units for responsive behavior
-                const emergenceDistanceVw = 20; // 20vw for emergence
-                const submersionDistanceVw = 25; // 25vw for submersion
-                
-                const emergenceDistance = (emergenceDistanceVw / 100) * viewportWidth;
-                const submersionDistance = (submersionDistanceVw / 100) * viewportWidth;
-                
-                const startY = 0; // Starting Y position (below footer)
-                const endY = -90; // Final Y position (fully emerged)
-                
-                let yPosition = startY;
-                let actualPosition = finPosition;
-                
-                // Handle direction changes and flipping
-                if (movingRight) {
-                    // Moving right: check if we've gone off-screen
-                    if (finPosition > viewportWidth + 104) {
-                        // Flip direction and start moving left from right edge
-                        movingRight = false;
-                        finPosition = viewportWidth + 104;
-                        gsap.set(sharkFin, { scaleX: -1 }); // Flip horizontally
-                    }
-                } else {
-                    // Moving left: check if we've gone off-screen left
-                    if (finPosition < -104) {
-                        // Flip direction and start moving right from left edge
-                        movingRight = true;
-                        finPosition = -104;
-                        gsap.set(sharkFin, { scaleX: 1 }); // Flip back to normal
-                    }
+                const submersionStartX = viewportWidth - submersionDistance;
+                if (xPos > submersionStartX) {
+                    const submersionProgress = Math.min(xPos - submersionStartX, submersionDistance);
+                    const submersionRatio = submersionProgress / submersionDistance;
+                    const easedSubmersion = Math.pow(submersionRatio, 3);
+                    yPosition = endY + (startY - endY) * easedSubmersion;
+                }
+            } else {
+                // Moving left: emerge from right, submerge to left
+                const rightEdgePosition = viewportWidth - xPos;
+                const emergenceProgress = Math.min(Math.max(rightEdgePosition, 0), emergenceDistance);
+                if (emergenceProgress > 0) {
+                    const emergenceRatio = emergenceProgress / emergenceDistance;
+                    const easedEmergence = 1 - Math.pow(1 - emergenceRatio, 3);
+                    yPosition = startY + (endY - startY) * easedEmergence;
                 }
                 
-                // Calculate emergence/submersion based on distance from edges
-                if (movingRight) {
-                    // Moving right: emerge from left, submerge to right
-                    const emergenceProgress = Math.min(Math.max(finPosition, 0), emergenceDistance);
-                    if (emergenceProgress > 0) {
-                        const emergenceRatio = emergenceProgress / emergenceDistance;
-                        const easedEmergence = 1 - Math.pow(1 - emergenceRatio, 3);
-                        yPosition = startY + (endY - startY) * easedEmergence;
-                    }
-                    
-                    const submersionStartX = viewportWidth - submersionDistance;
-                    if (finPosition > submersionStartX) {
-                        const submersionProgress = Math.min(finPosition - submersionStartX, submersionDistance);
-                        const submersionRatio = submersionProgress / submersionDistance;
-                        const easedSubmersion = Math.pow(submersionRatio, 3);
-                        yPosition = endY + (startY - endY) * easedSubmersion;
-                    }
-                } else {
-                    // Moving left: emerge from right, submerge to left
-                    const rightEdgePosition = viewportWidth - finPosition;
-                    const emergenceProgress = Math.min(Math.max(rightEdgePosition, 0), emergenceDistance);
-                    if (emergenceProgress > 0) {
-                        const emergenceRatio = emergenceProgress / emergenceDistance;
-                        const easedEmergence = 1 - Math.pow(1 - emergenceRatio, 3);
-                        yPosition = startY + (endY - startY) * easedEmergence;
-                    }
-                    
-                    const submersionStartX = submersionDistance;
-                    if (finPosition < submersionStartX) {
-                        const submersionProgress = Math.min(submersionStartX - finPosition, submersionDistance);
-                        const submersionRatio = submersionProgress / submersionDistance;
-                        const easedSubmersion = Math.pow(submersionRatio, 3);
-                        yPosition = endY + (startY - endY) * easedSubmersion;
-                    }
-                }
-                
-                // Show fin when it's within reasonable bounds
-                if (finPosition >= -104 && finPosition <= viewportWidth + 104) {
-                    const shouldShow = finPosition >= 0 && finPosition <= viewportWidth;
-                    gsap.to(sharkFin, {
-                        x: finPosition,
-                        y: yPosition,
-                        opacity: shouldShow ? 1 : 0,
-                        duration: 0.15,
-                        ease: "none"
-                    });
+                const submersionStartX = submersionDistance;
+                if (xPos < submersionStartX) {
+                    const submersionProgress = Math.min(submersionStartX - xPos, submersionDistance);
+                    const submersionRatio = submersionProgress / submersionDistance;
+                    const easedSubmersion = Math.pow(submersionRatio, 3);
+                    yPosition = endY + (startY - endY) * easedSubmersion;
                 }
             }
             
-            lastScrollY = currentScrollY;
+            return yPosition;
         }
         
-        // Use scroll event for immediate response
-        let ticking = false;
+        // Create the continuous animation timeline - start immediately on page load
+        const timeline = gsap.timeline({ repeat: -1 });
         
-        function requestTick() {
-            if (!ticking) {
-                requestAnimationFrame(updateFinPosition);
-                ticking = true;
-                setTimeout(() => ticking = false, 16); // ~60fps throttle
+        // Move right across screen (9 seconds)
+        timeline.to(sharkFin, {
+            x: viewportWidth + 104,
+            duration: 9,
+            ease: "none",
+            onUpdate: function() {
+                const currentX = gsap.getProperty(sharkFin, "x");
+                const yPos = calculateYPosition(currentX, true);
+                const shouldShow = currentX >= 0 && currentX <= viewportWidth;
+                
+                gsap.set(sharkFin, {
+                    y: yPos,
+                    opacity: shouldShow ? 1 : 0
+                });
             }
-        }
-        
-        window.addEventListener('scroll', requestTick, { passive: true });
+        })
+        // Flip direction and move left across screen (9 seconds)
+        .to(sharkFin, {
+            scaleX: -1,
+            duration: 0.1
+        })
+        .to(sharkFin, {
+            x: -104,
+            duration: 9,
+            ease: "none",
+            onUpdate: function() {
+                const currentX = gsap.getProperty(sharkFin, "x");
+                const yPos = calculateYPosition(currentX, false);
+                const shouldShow = currentX >= 0 && currentX <= viewportWidth;
+                
+                gsap.set(sharkFin, {
+                    y: yPos,
+                    opacity: shouldShow ? 1 : 0
+                });
+            }
+        })
+        // Flip back to face right
+        .to(sharkFin, {
+            scaleX: 1,
+            duration: 0.1
+        });
     }
     
     // Fixed header visibility on scroll
