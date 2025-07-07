@@ -478,6 +478,7 @@ img {
         .cta__content {
             padding-right: 2rem;
             padding-top: 2rem;
+
         }
     }
 
@@ -587,10 +588,10 @@ img {
 $gt-white: #ffffff;
 $gt-blue: #008ed5;
 $gt-dark-blue: #082f61;
-$gt-facebook: #3b5998;
-$gt-twitter: #1da1f2;
-$gt-linkedin: #0077b5;
-$gt-instagram: #e1306c;
+$gt-facebook: #2575cf;
+$gt-twitter: #000000;
+$gt-linkedin: #f39a3a;
+$gt-instagram: #f55349;
 
 // Footer Shark Fin Animation (preserved from our design)
 .footer__shark-fin {
@@ -611,12 +612,17 @@ $gt-instagram: #e1306c;
 // Ocean Conservancy Footer Styles
 footer.gutenberg {
     color: $gt-white;
-    padding-bottom: 62px;
+    padding: 0 1rem 62px 0; // Mobile padding
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
     z-index: 10;
     clear: both;
+    
+    // Tablet and above padding
+    @media (min-width: $tablet) {
+        padding: 0 2rem 62px 0;
+    }
 
     .oco-fot__video {
         background-image: none;
@@ -660,7 +666,7 @@ footer.gutenberg {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto;
+            margin: 0 auto 50px auto; // Mobile bottom margin
 
             a {
                 flex: 1;
@@ -677,6 +683,11 @@ footer.gutenberg {
                 svg {
                     height: 28px;
                     width: auto;
+                    
+                    // Larger icons on phablet+
+                    @media (min-width: 600px) {
+                        height: 32px;
+                    }
                 }
                 
                 &.facebook {
@@ -775,6 +786,7 @@ footer.gutenberg {
                             padding: 8px 18px;
                             border: none;
                             cursor: pointer;
+                            font-size: 12px; // Mobile font size
 
                             &:hover {
                                 background-color: $gt-white;
@@ -822,6 +834,12 @@ footer.gutenberg {
             display: flex;
             justify-content: center;
             align-items: stretch;
+            margin: 70px auto 20px; // Mobile margin
+            
+            // Phablet and above
+            @media (min-width: 600px) {
+                margin: 30px auto;
+            }
 
             & > * {
                 display: flex;
@@ -842,6 +860,12 @@ footer.gutenberg {
                     a {
                         color: $gt-white;
                         text-decoration: none;
+                        font-size: 14px;
+                        
+                        // Larger font on tablet+
+                        @media (min-width: $tablet) {
+                            font-size: 16px;
+                        }
                         
                         &:hover {
                             text-decoration: underline;

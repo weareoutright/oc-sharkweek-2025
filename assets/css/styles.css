@@ -414,12 +414,15 @@ img {
 
 footer.gutenberg {
   color: #ffffff;
-  padding-bottom: 62px;
+  padding: 0 1rem 62px 0;
   background-repeat: no-repeat;
   background-size: cover;
   position: relative;
   z-index: 10;
   clear: both; }
+  @media (min-width: 1024px) {
+    footer.gutenberg {
+      padding: 0 2rem 62px 0; } }
   footer.gutenberg .oco-fot__video {
     background-image: none;
     position: absolute;
@@ -450,7 +453,7 @@ footer.gutenberg {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 auto; }
+      margin: 0 auto 50px auto; }
       footer.gutenberg .constrained > .social-menu a {
         flex: 1;
         border-radius: 8px;
@@ -465,22 +468,25 @@ footer.gutenberg {
         footer.gutenberg .constrained > .social-menu a svg {
           height: 28px;
           width: auto; }
+          @media (min-width: 600px) {
+            footer.gutenberg .constrained > .social-menu a svg {
+              height: 32px; } }
         footer.gutenberg .constrained > .social-menu a.facebook {
-          background-color: #3b5998; }
+          background-color: #2575cf; }
           footer.gutenberg .constrained > .social-menu a.facebook:hover {
-            fill: #3b5998; }
+            fill: #2575cf; }
         footer.gutenberg .constrained > .social-menu a.twitter {
-          background-color: #1da1f2; }
+          background-color: #000000; }
           footer.gutenberg .constrained > .social-menu a.twitter:hover {
-            fill: #1da1f2; }
+            fill: #000000; }
         footer.gutenberg .constrained > .social-menu a.linkedin {
-          background-color: #0077b5; }
+          background-color: #f39a3a; }
           footer.gutenberg .constrained > .social-menu a.linkedin:hover {
-            fill: #0077b5; }
+            fill: #f39a3a; }
         footer.gutenberg .constrained > .social-menu a.instagram {
-          background-color: #e1306c; }
+          background-color: #f55349; }
           footer.gutenberg .constrained > .social-menu a.instagram:hover {
-            fill: #e1306c; }
+            fill: #f55349; }
         footer.gutenberg .constrained > .social-menu a:hover {
           background-color: #ffffff; }
     footer.gutenberg .constrained > .email-signup-container .email-signup {
@@ -529,7 +535,8 @@ footer.gutenberg {
             border-radius: 9px;
             padding: 8px 18px;
             border: none;
-            cursor: pointer; }
+            cursor: pointer;
+            font-size: 12px; }
             footer.gutenberg .constrained > .email-signup-container .email-signup .rsform--submit input:hover {
               background-color: #ffffff;
               color: #008ed5; }
@@ -557,7 +564,11 @@ footer.gutenberg {
     footer.gutenberg .constrained .menus {
       display: flex;
       justify-content: center;
-      align-items: stretch; }
+      align-items: stretch;
+      margin: 70px auto 20px; }
+      @media (min-width: 600px) {
+        footer.gutenberg .constrained .menus {
+          margin: 30px auto; } }
       footer.gutenberg .constrained .menus > * {
         display: flex; }
       footer.gutenberg .constrained .menus .menu {
@@ -572,7 +583,11 @@ footer.gutenberg {
           padding: 4px 0; }
           footer.gutenberg .constrained .menus .menu li a {
             color: #ffffff;
-            text-decoration: none; }
+            text-decoration: none;
+            font-size: 14px; }
+            @media (min-width: 1024px) {
+              footer.gutenberg .constrained .menus .menu li a {
+                font-size: 16px; } }
             footer.gutenberg .constrained .menus .menu li a:hover {
               text-decoration: underline; }
     footer.gutenberg .constrained .contact-info {
