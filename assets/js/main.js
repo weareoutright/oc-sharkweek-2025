@@ -82,121 +82,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 gsap.set(mainElement, { position: "fixed", top: 0, left: 0, right: 0, zIndex: 1 });
             }
             
-            // Create invisible spacer to enable scrolling without moving content
-            const spacer = document.createElement('div');
-            spacer.style.height = '500vh';
-            spacer.style.width = '1px';
-            spacer.style.position = 'absolute';
-            spacer.style.top = '0';
-            spacer.style.left = '0';
-            spacer.style.pointerEvents = 'none';
-            spacer.style.zIndex = '-1';
-            spacer.id = 'scroll-spacer'; // Add ID for easier tracking
-            document.body.appendChild(spacer);
+            // Create invisible spacer for video scrubbing (controls scrub speed)
+            const videoSpacer = document.createElement('div');
+            videoSpacer.style.height = '400vh'; // Fixed reasonable scroll distance
+            videoSpacer.style.width = '1px';
+            videoSpacer.style.position = 'absolute';
+            videoSpacer.style.top = '0';
+            videoSpacer.style.left = '0';
+            videoSpacer.style.pointerEvents = 'none';
+            videoSpacer.style.zIndex = '-1';
+            videoSpacer.id = 'video-spacer';
+            document.body.appendChild(videoSpacer);
             
-            // Create timeline for video scrubbing and splash fade
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: spacer,
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: 1,
-                    markers: false, // Disable debug markers
-                    onUpdate: function(self) {
-                        // When animation reaches ~75% (during splash fade), clean up and enable normal scrolling
-                        if (self.progress >= 0.75 && !cleanupExecuted) {
-                            cleanupExecuted = true;
-                            
-                            // Get footer element to manage its z-index during transition
-                            const footerElement = document.querySelector('footer');
-                            
-                            // Hide splash completely
-                            gsap.set(splashSection, { display: "none" });
-                            
-                            // Temporarily lower footer z-index to prevent flash
-                            if (footerElement) {
-                                gsap.set(footerElement, { zIndex: -1 });
-                            }
-                            
-                            if (navElement) {
-                                const navLogo = navElement.querySelector('.nav__logo');
-                                // Keep nav fixed until CTA1 reaches the bottom of nav
-                                gsap.set(navElement, { position: "fixed", zIndex: 1001 });
-                                // Keep nav logo hidden after cleanup using both GSAP and CSS class
-                                if (navLogo) {
-                                    gsap.set(navLogo, { opacity: 0 });
-                                    navLogo.classList.add('nav-logo-hidden');
-                                }
-                            }
-                            
-                            // More robust spacer removal
-                            const existingSpacer = document.getElementById('scroll-spacer');
-                            if (existingSpacer) {
-                                existingSpacer.remove();
-                            }
-                            
-                            // Instead of changing positioning immediately, smoothly transition
-                            if (mainElement) {
-                                // First, move main element to the top while still fixed
-                                gsap.set(mainElement, { top: "0px", zIndex: 100 }); // Ensure main is on top during transition
-                                
-                                // Then transition to relative positioning after a brief moment
-                                setTimeout(() => {
-                                    // Hide footer during transition to prevent flash
-                                    if (footerElement) {
-                                        gsap.set(footerElement, { visibility: "hidden" });
-                                    }
-                                    
-                                    gsap.set(mainElement, { 
-                                        position: "relative", 
-                                        zIndex: "auto",
-                                        top: "auto" 
-                                    });
-                                    
-                                    // Restore footer visibility and z-index after main element is properly positioned
-                                    setTimeout(() => {
-                                        if (footerElement) {
-                                            gsap.set(footerElement, { visibility: "visible", zIndex: 10 });
-                                        }
-                                        
-                                        // Set up nav positioning ScrollTrigger after splash cleanup
-                                        setupNavPositioning();
-                                        
-                                        // Set up CTA depth blur effects
-                                        setupCTADepthEffects();
-                                        
-                                        ScrollTrigger.refresh();
-                                    }, 50); // Additional delay to ensure smooth transition
-                                }, 50); // Shorter initial delay since scroll is already reset
-                            }
-                            
-                            // Kill this ScrollTrigger to prevent further callbacks
-                            self.kill();
-                        }
-                    },
-                    onComplete: function() {
-                        // Fallback cleanup in case onUpdate doesn't trigger
-                        const existingSpacer = document.getElementById('scroll-spacer');
-                        if (existingSpacer) {
-                            existingSpacer.remove();
-                        }
-                    }
-                }
-            });
+            // Track fade state
+            let fadeStarted = false;
             
-            // Video scrubbing (0% - 65% of scroll range) with keyframe-aware seeking
+            // Video scrubbing ScrollTrigger - independent control
             let lastTargetTime = 0;
             let seekThrottle = 0;
-            let problemAreaStart = 1.8; // Start of transition area
-            let problemAreaEnd = 2.3;   // End of transition area
+            let problemAreaStart = 1.8;
+            let problemAreaEnd = 2.3;
             
-            tl.to(splashVideo, {
-                currentTime: splashVideo.duration,
-                ease: "none",
-                duration: 0.65, // Takes up 65% of timeline
-                onUpdate: function() {
-                    const scrollProgress = this.progress();
-                    const targetTime = scrollProgress * splashVideo.duration;
+            ScrollTrigger.create({
+                trigger: videoSpacer,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1,
+                onUpdate: function(self) {
+                    const scrollProgress = self.progress;
+                    
+                    // Use eased curve to accelerate video progress near the end
+                    // This ensures we reach 100% video completion within reasonable scroll distance
+                    const easedProgress = scrollProgress < 0.8 
+                        ? scrollProgress * 1.25  // Normal speed for first 80% of scroll
+                        : 0.8 * 1.25 + (scrollProgress - 0.8) * 5; // Accelerate for last 20%
+                    
+                    const targetTime = Math.min(easedProgress, 1) * splashVideo.duration;
                     const currentTime = splashVideo.currentTime;
                     const timeDifference = Math.abs(currentTime - targetTime);
                     const now = Date.now();
@@ -205,51 +126,121 @@ document.addEventListener('DOMContentLoaded', function() {
                     const inProblemArea = targetTime >= problemAreaStart && targetTime <= problemAreaEnd;
                     
                     // Adjust seeking behavior based on location in video
-                    let minTimeDiff = inProblemArea ? 0.1 : 0.05;  // Larger threshold in problem area
-                    let minTargetChange = inProblemArea ? 0.05 : 0.02; // Larger change required in problem area
-                    let throttleTime = inProblemArea ? 33 : 16; // Slower seeking in problem area (~30fps vs 60fps)
-                    
+                    let minTimeDiff = inProblemArea ? 0.1 : 0.05;
+                    let minTargetChange = inProblemArea ? 0.05 : 0.02;
+                    let throttleTime = inProblemArea ? 33 : 16;
                     
                     // Keyframe-aware seeking logic
                     if (timeDifference > minTimeDiff && 
                         Math.abs(targetTime - lastTargetTime) > minTargetChange && 
                         now - seekThrottle > throttleTime) {
                         
-                        // Try fastSeek if available, fallback to regular seeking
                         try {
                             if (typeof splashVideo.fastSeek === 'function') {
                                 splashVideo.fastSeek(targetTime);
                             } else {
-                                // In problem area, allow larger tolerance to avoid micro-seeks
                                 if (inProblemArea && timeDifference < 0.2) {
-                                    // Skip seeking if we're close enough in problem area
                                     return;
                                 }
                                 splashVideo.currentTime = targetTime;
                             }
                         } catch (e) {
-                            // Fallback to basic seeking
                             splashVideo.currentTime = targetTime;
                         }
                         
                         lastTargetTime = targetTime;
                         seekThrottle = now;
                     }
+                    
+                    // Trigger fade when video reaches 90% completion (based on actual video time)
+                    if (splashVideo.currentTime >= splashVideo.duration * 0.9 && !fadeStarted) {
+                        fadeStarted = true;
+                        startFadeOut();
+                    }
                 }
             });
             
-            // Splash fade out (65% - 100% of scroll range)
-            tl.to(splashSection, {
-                opacity: 0,
-                ease: "power2.out",
-                duration: 0.35 // Takes up remaining 35% of timeline
-            })
-            // Hide nav logo at the same time as splash fades out
-            .to(navElement ? navElement.querySelector('.nav__logo') : null, {
-                opacity: 0,
-                ease: "power2.out",
-                duration: 0.25
-            }, "-=0.25"); // Start at same time as splash fade
+            // Function to start fade-out animation when video ends
+            function startFadeOut() {
+                const fadeTimeline = gsap.timeline();
+                
+                // Fade out splash and nav logo over 1 second
+                fadeTimeline.to(splashSection, {
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+                
+                // Fade out nav logo at the same time
+                const navLogo = navElement ? navElement.querySelector('.nav__logo') : null;
+                if (navLogo) {
+                    fadeTimeline.to(navLogo, {
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power2.out"
+                    }, 0); // Start at same time
+                }
+                
+                // Trigger cleanup when fade is complete
+                fadeTimeline.call(() => {
+                    if (!cleanupExecuted) {
+                        cleanupExecuted = true;
+                        
+                        // Get footer element to manage its z-index during transition
+                        const footerElement = document.querySelector('footer');
+                        
+                        // Hide splash completely
+                        gsap.set(splashSection, { display: "none" });
+                        
+                        // Temporarily lower footer z-index to prevent flash
+                        if (footerElement) {
+                            gsap.set(footerElement, { zIndex: -1 });
+                        }
+                        
+                        if (navElement) {
+                            const navLogo = navElement.querySelector('.nav__logo');
+                            // Keep nav fixed until CTA1 reaches the bottom of nav
+                            gsap.set(navElement, { position: "fixed", zIndex: 1001 });
+                            // Keep nav logo hidden after cleanup using both GSAP and CSS class
+                            if (navLogo) {
+                                gsap.set(navLogo, { opacity: 0 });
+                                navLogo.classList.add('nav-logo-hidden');
+                            }
+                        }
+                        
+                        // Remove video spacer
+                        const existingVideoSpacer = document.getElementById('video-spacer');
+                        if (existingVideoSpacer) existingVideoSpacer.remove();
+                        
+                        // Smooth transition to main content
+                        if (mainElement) {
+                            gsap.set(mainElement, { top: "0px", zIndex: 100 });
+                            
+                            setTimeout(() => {
+                                if (footerElement) {
+                                    gsap.set(footerElement, { visibility: "hidden" });
+                                }
+                                
+                                gsap.set(mainElement, { 
+                                    position: "relative", 
+                                    zIndex: "auto",
+                                    top: "auto" 
+                                });
+                                
+                                setTimeout(() => {
+                                    if (footerElement) {
+                                        gsap.set(footerElement, { visibility: "visible", zIndex: 10 });
+                                    }
+                                    
+                                    setupNavPositioning();
+                                    setupCTADepthEffects();
+                                    ScrollTrigger.refresh();
+                                }, 50);
+                            }, 50);
+                        }
+                    }
+                });
+            }
         }
         
         // Wait for video metadata to load
