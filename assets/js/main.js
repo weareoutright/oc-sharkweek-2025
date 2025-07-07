@@ -504,9 +504,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const fixedHeader = document.getElementById('fixedHeader');
     // Fixed header starts invisible - no need to add 'show' class
     
-    // Main background transition from fixed to scrolling when footer appears
+    // Main background and fixed header transition from fixed to scrolling when footer appears
     const mainBackground = document.querySelector('.main__background');
     const footer = document.querySelector('footer');
+    const fixedHeaderForFooter = document.getElementById('fixedHeader');
     
     if (mainBackground && footer && typeof gsap !== 'undefined') {
         // Register ScrollTrigger plugin
@@ -520,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Calculate current scroll position to maintain visual continuity
                 const scrollY = window.pageYOffset;
                 
-                // Switch from fixed to absolute positioning
+                // Switch main background from fixed to absolute positioning
                 gsap.set(mainBackground, {
                     position: "absolute",
                     top: scrollY + "px", // Position it where it currently appears
@@ -529,9 +530,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     height: "100vh",
                     zIndex: -1
                 });
+                
+                // Switch fixed header from fixed to absolute positioning at the same time
+                if (fixedHeaderForFooter) {
+                    // Calculate 20vh in pixels
+                    const twentyVh = window.innerHeight * 0.2;
+                    gsap.set(fixedHeaderForFooter, {
+                        position: "absolute",
+                        top: (scrollY + twentyVh) + "px", // Maintain 20vh offset from scroll position
+                        left: 0,
+                        right: 0,
+                        zIndex: 1000
+                    });
+                }
             },
             onLeaveBack: () => {
-                // Return to fixed positioning when scrolling back up
+                // Return both to fixed positioning when scrolling back up
                 gsap.set(mainBackground, {
                     position: "fixed",
                     top: 0,
@@ -540,6 +554,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     height: "100vh",
                     zIndex: -1
                 });
+                
+                if (fixedHeaderForFooter) {
+                    gsap.set(fixedHeaderForFooter, {
+                        position: "fixed",
+                        top: "20vh",
+                        left: 0,
+                        right: 0,
+                        zIndex: 1000
+                    });
+                }
             }
         });
     }
