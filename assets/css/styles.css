@@ -102,13 +102,13 @@ img {
 
 .fixed-header {
   position: fixed;
-  top: 0;
+  top: 20vh;
   left: 0;
   right: 0;
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
   padding: 1rem 2rem; }
   .fixed-header.show {
     opacity: 1;
@@ -116,9 +116,8 @@ img {
   .fixed-header__container {
     display: flex;
     align-items: center;
-    max-width: 1200px;
     width: 100%;
-    margin: 0 auto;
+    margin: 0o;
     background: transparent;
     padding: 0; }
   .fixed-header__logo {

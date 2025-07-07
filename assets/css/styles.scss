@@ -173,13 +173,13 @@ img {
 // Fixed Header Overlay
 .fixed-header {
     position: fixed;
-    top: 0;
+    top: 20vh;
     left: 0;
     right: 0;
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
     padding: 1rem 2rem; // Same padding as nav
     
     &.show {
@@ -190,9 +190,8 @@ img {
     &__container {
         display: flex;
         align-items: center;
-        max-width: 1200px; // Same max-width as nav
         width: 100%;
-        margin: 0 auto; // Same centering as nav
+        margin: 0o;
         background: transparent;
         padding: 0;
     }

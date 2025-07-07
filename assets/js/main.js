@@ -171,15 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     ease: "power2.out"
                 });
                 
-                // Fade out nav logo at the same time
-                const navLogo = navElement ? navElement.querySelector('.nav__logo') : null;
-                if (navLogo) {
-                    fadeTimeline.to(navLogo, {
-                        opacity: 0,
-                        duration: 1,
-                        ease: "power2.out"
-                    }, 0); // Start at same time
-                }
                 
                 // Trigger cleanup when fade is complete
                 fadeTimeline.call(() => {
@@ -198,14 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         if (navElement) {
-                            const navLogo = navElement.querySelector('.nav__logo');
-                            // Keep nav fixed until CTA1 reaches the bottom of nav
+                            // Keep nav fixed
                             gsap.set(navElement, { position: "fixed", zIndex: 1001 });
-                            // Keep nav logo hidden after cleanup using both GSAP and CSS class
-                            if (navLogo) {
-                                gsap.set(navLogo, { opacity: 0 });
-                                navLogo.classList.add('nav-logo-hidden');
-                            }
                         }
                         
                         // Remove video spacer
@@ -257,26 +242,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to set up nav positioning after splash cleanup
     function setupNavPositioning() {
         const navElement = document.querySelector('.nav');
-        const cta1 = document.querySelector('.cta-video'); // First CTA element
+        const mainContent = document.querySelector('.main__content');
+        const fixedHeader = document.getElementById('fixedHeader');
         
-        if (navElement && cta1 && typeof gsap !== 'undefined') {
+        if (navElement && mainContent && typeof gsap !== 'undefined') {
             
-            // Get nav height to calculate when CTA1 reaches bottom of nav
+            // Get nav height to calculate when main content reaches the nav
             const navHeight = navElement.offsetHeight;
             
+            // ScrollTrigger to make nav scroll with main content when main content reaches the nav
             ScrollTrigger.create({
-                trigger: cta1,
-                start: `top ${navHeight}px`, // When CTA1 top reaches bottom of nav
-                end: `top ${navHeight - 50}px`, // Fade over 50px range
-                scrub: true, // Smooth animation tied to scroll
-                onUpdate: (self) => {
-                    // Fade out nav as CTA1 approaches the bottom of nav
-                    const opacity = 1 - self.progress;
-                    gsap.to(navElement, { opacity: opacity, duration: 0.1 });
+                trigger: mainContent,
+                start: `top ${navHeight}px`, // When main content top reaches bottom of nav
+                end: `top top`, // When main content reaches top of viewport
+                onEnter: () => {
+                    // Switch nav from fixed to absolute positioning so it scrolls with content
+                    gsap.set(navElement, {
+                        position: "absolute",
+                        top: window.pageYOffset + "px", // Position it where it currently appears
+                        left: 0,
+                        right: 0,
+                        zIndex: 1001
+                    });
                 },
-                onEnter: () => {},
-                onLeaveBack: () => {}
+                onLeaveBack: () => {
+                    // Return to fixed positioning when scrolling back up
+                    gsap.set(navElement, {
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 1001
+                    });
+                }
             });
+            
+            // ScrollTrigger to fade in fixed header after nav has scrolled out of view
+            if (fixedHeader) {
+                ScrollTrigger.create({
+                    trigger: mainContent,
+                    start: `top ${-navHeight}px`, // Start fade when nav has scrolled its full height out of view
+                    end: `top ${-navHeight - 60}px`, // Complete fade 60px later
+                    onEnter: () => {
+                        // Fade in fixed header quickly
+                        fixedHeader.classList.add('show');
+                    },
+                    onLeaveBack: () => {
+                        // Fade out fixed header when scrolling back up
+                        fixedHeader.classList.remove('show');
+                    }
+                });
+            }
         }
     }
 
@@ -484,32 +500,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Fixed header visibility on scroll
+    // Fixed header starts invisible and fades in after nav scrolls out
     const fixedHeader = document.getElementById('fixedHeader');
-    const mainContent = document.querySelector('.main');
-    
-    if (fixedHeader && mainContent && typeof gsap !== 'undefined') {
-        // Create ScrollTrigger for fixed header visibility
-        gsap.registerPlugin(ScrollTrigger);
-        
-        ScrollTrigger.create({
-            trigger: mainContent,
-            start: "top center", // Show header when main content reaches center of viewport
-            end: "bottom bottom",
-            onEnter: () => {
-                fixedHeader.classList.add('show');
-            },
-            onLeave: () => {
-                fixedHeader.classList.remove('show');
-            },
-            onEnterBack: () => {
-                fixedHeader.classList.add('show');
-            },
-            onLeaveBack: () => {
-                fixedHeader.classList.remove('show');
-            }
-        });
-    }
+    // Fixed header starts invisible - no need to add 'show' class
     
     // Main background transition from fixed to scrolling when footer appears
     const mainBackground = document.querySelector('.main__background');
